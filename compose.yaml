@@ -1,0 +1,78 @@
+name: jetkvm-cloud-selfhosted
+
+networks:
+  jetkvm:
+    driver: bridge
+
+services:
+  api-db:
+    image: postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_PASSWORD: jetkvm
+      POSTGRES_USER: jetkvm
+      POSTGRES_DB: jetkvm
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U jetkvm -d jetkvm"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+      start_period: 5s
+    ports:
+      - "5432:5432"
+    networks:
+      - jetkvm
+    volumes:
+      - postgresql:/var/lib/postgresql
+
+  # Run database migrations before starting the apps
+  api-migrate:
+    build: ./cloud-api
+    env_file:
+      - ./cloud-api/.env
+    environment:
+      DATABASE_URL: postgres://jetkvm:jetkvm@api-db:5432/jetkvm
+    depends_on:
+      api-db:
+        condition: service_healthy
+    command: ["sh", "-c", "npx prisma migrate deploy"]
+    networks:
+      - jetkvm
+    restart: no
+
+  api:
+    build: ./cloud-api
+    restart: unless-stopped
+    env_file:
+      - ./cloud-api/.env
+    environment:
+      PORT: 5172
+      DATABASE_URL: postgres://jetkvm:jetkvm@api-db:5432/jetkvm
+    depends_on:
+      api-db:
+        condition: service_healthy
+      api-migrate:
+        condition: service_completed_successfully
+    ports:
+      - "5172:5172"
+    networks:
+      - jetkvm
+
+  ui:
+    build:
+      context: ./kvm
+      dockerfile: Dockerfile-ui
+    restart: unless-stopped
+    depends_on:
+      api-db:
+        condition: service_healthy
+      api-migrate:
+        condition: service_completed_successfully
+    ports:
+      - "5173:5173"
+    networks:
+      - jetkvm
+
+volumes:
+  postgresql:
+    driver: local

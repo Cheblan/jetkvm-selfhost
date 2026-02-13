@@ -1,0 +1,6 @@
+### No need for VITE_CLOUD_APP it's only needed for the device build
+
+### We use this for all the cloud API requests from the browser
+
+# Fill this with your desired api URL in https://example.com format
+VITE_CLOUD_API=

@@ -1,0 +1,45 @@
+PORT=5172
+DATABASE_URL="postgresql://jetkvm:jetkvm@api-db:5432/jetkvm?schema=public"
+
+###
+### Google Auth with OIDC Configuration
+###
+
+# Create "Testing app", create "Client" for it, fill in ID and Secret. It is abolutely free. Google cloud console URL - https://console.cloud.google.com/auth
+GOOGLE_CLIENT_ID=
+GOOGLE_CLIENT_SECRET=
+
+# Fill this with your desired URLs in https://example.com format
+API_HOSTNAME=
+APP_HOSTNAME=
+
+###
+### Cloudflare TURN Service
+###
+CLOUDFLARE_TURN_ID=
+CLOUDFLARE_TURN_TOKEN=
+
+###
+### Session Cookie Secret
+###
+COOKIE_SECRET=ChangeThisToSomethingSecureAndLong
+
+###
+### S3 Compatible Storage
+###
+R2_ENDPOINT=
+R2_ACCESS_KEY_ID=
+R2_SECRET_ACCESS_KEY=
+R2_BUCKET=
+R2_CDN_URL=
+
+### Allowed CORS Origins, split by comma
+# Fill this with your app URL in https://example.com format
+CORS_ORIGINS=
+
+### Real IP Header for the reverse proxy (e.g. X-Real-IP), leave empty if not needed
+REAL_IP_HEADER=X-Real-IP
+
+### ICE Servers for WebRTC, split by comma (e.g. stun:stun.l.google.com:19302,stun:stun1.l.google.com:19302)
+# No need to fill it now, app defaults to these 2 example google stun servers and as for today there's no way to use self hosted TURN servers
+ICE_SERVERS=
