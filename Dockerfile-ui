@@ -1,4 +1,4 @@
-FROM node:25-alpine AS builder
+FROM node:22-alpine AS builder
 WORKDIR /kvm
 
 COPY . .
@@ -6,7 +6,7 @@ COPY . .
 RUN npm --prefix /kvm/ui install
 RUN npm --prefix /kvm/ui run build:prod
 
-FROM node:25-alpine AS app
+FROM node:22-alpine AS app
 LABEL org.opencontainers.image.source="https://github.com/jetkvm/kvm"
 WORKDIR /usr/src/app
 
@@ -14,4 +14,4 @@ COPY --from=builder /kvm/ui/dist /usr/src/app/dist
 
 EXPOSE 5173
 RUN npm i -g serve
-ENTRYPOINT ["npx", "serve", "/usr/src/app/dist/", "-l", "5173"]
+ENTRYPOINT ["npx", "serve", "-s", "/usr/src/app/dist/", "-l", "5173"]
