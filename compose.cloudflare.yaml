@@ -1,0 +1,15 @@
+services:
+  # Front-end proxy for SPA fallback (required for /signup, etc. behind CF Tunnel)
+  ui-front:
+    image: caddy:alpine
+    restart: unless-stopped
+    depends_on:
+      - ui
+    ports:
+      - "5173:5173"
+    volumes:
+      - ./Caddyfile.cloudflare:/etc/caddy/Caddyfile:ro
+
+  # Do not publish ui directly when using ui-front
+  ui:
+    ports: []

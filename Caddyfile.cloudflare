@@ -1,0 +1,15 @@
+:5173
+
+# SPA routing fix:
+# - Serve static assets normally (files with extensions)
+# - Rewrite all other paths to "/" so the SPA receives index.html
+@assets path_regexp assets \.[a-zA-Z0-9]{1,8}$
+
+handle @assets {
+  reverse_proxy ui:5173
+}
+
+handle {
+  rewrite * /
+  reverse_proxy ui:5173
+}

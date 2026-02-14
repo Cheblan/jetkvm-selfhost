@@ -58,21 +58,68 @@ REAL_IP_HEADER=X-Real-IP
 
 ## Deployment
 
-The provided deploy.sh script does next:
-1. Cleans up the old builds.
-2. Clones the latest stable versions of jetkvm/kvm and jetkvm/cloud-api.
-3. Copies UI Dockerfile and your .env files.
+The provided `deploy.sh` script does the following:
+
+1. Cleans up old builds.
+2. Clones the latest stable versions of `jetkvm/kvm` and `jetkvm/cloud-api`.
+3. Copies the UI Dockerfile and your `.env` files into place.
 4. Spins up the entire stack using Docker Compose.
 
-#### To deploy:
-```shell
+### To deploy
+
+```sh
 git clone https://github.com/Cheblan/jetkvm-selfhost.git
 cd jetkvm-selfhost
 chmod +x deploy.sh
 ./deploy.sh
 ```
 
+## Cloudflare Tunnel / SPA routing (important for adoption)
+
+If you expose the UI through Cloudflare Tunnel (or any reverse proxy that forwards directly to the UI container),
+you may hit a 404 when the device redirects to a client-side route like:
+
+`https://<APP_HOSTNAME>/signup?deviceId=...`
+
+This repo’s UI is a Single Page Application (SPA). Routes like `/signup` are handled by the browser app and
+must be served with `index.html` (history fallback). If the server returns a real 404 for `/signup`,
+the adoption flow breaks.
+
+### Recommended fix: run an SPA-fallback front container (Caddy)
+
+This repo includes an optional compose override that adds a small Caddy front container which:
+
+* passes asset files through unchanged (js/css/png/etc.)
+* rewrites all non-asset paths to `/` so the UI returns `index.html`
+
+1. Create the Caddyfile and compose override (already included in this repo):
+
+* `Caddyfile.cloudflare`
+* `compose.cloudflare.yaml`
+
+2. Start with both compose files:
+
+```sh
+docker compose -f compose.yaml -f compose.cloudflare.yaml up -d --build
+```
+
+### Google OAuth redirect URI
+
+When configuring Google OAuth, the redirect URI used by the API is:
+
+`https://<API_HOSTNAME>/oidc/callback`
+
+Add that exact URL in Google Cloud Console → OAuth client → **Authorized redirect URIs**.
+
+### CORS_ORIGINS format
+
+`CORS_ORIGINS` should be a comma-separated list (the API code uses `split(",")`), e.g.:
+
+```dotenv
+CORS_ORIGINS=https://app.example.com,https://api.example.com
+```
+
 ## To be done
 
-1. Add self-hosted coturn TURN server deployment [once support for them is merged in API](https://github.com/jetkvm/cloud-api/pull/53)
-2. Add description on email allowlist [once it's merged in main](https://github.com/jetkvm/cloud-api/commit/8596c72b29403f99418ddb893a332f1d7ce94432)
+1. Add self-hosted coturn TURN server deployment once support is merged in the API: [https://github.com/jetkvm/cloud-api/pull/53](https://github.com/jetkvm/cloud-api/pull/53)
+2. Add description on email allowlist once it's merged in main: [https://github.com/jetkvm/cloud-api/commit/8596c72b29403f99418ddb893a332f1d7ce94432](https://github.com/jetkvm/cloud-api/commit/8596c72b29403f99418ddb893a332f1d7ce94432)
