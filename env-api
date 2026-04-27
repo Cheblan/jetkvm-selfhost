@@ -37,6 +37,9 @@ R2_CDN_URL=
 # Fill this with your app URL in https://example.com format
 CORS_ORIGINS=
 
+### Allowed account emails, split by comma (leave empty to allow all)
+ALLOWED_IDENTITIES=
+
 ### Real IP Header for the reverse proxy (e.g. X-Real-IP), leave empty if not needed
 REAL_IP_HEADER=X-Real-IP
 

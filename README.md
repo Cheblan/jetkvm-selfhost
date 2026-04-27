@@ -55,6 +55,9 @@ CORS_ORIGINS=https://your-ui-domain.com
 # =CF-Connecting-IP for Cloudflare
 # =X-Forwarded-For for Traefik/Haproxy/Nginx
 REAL_IP_HEADER=X-Real-IP
+
+# Allowed account emails, split by comma (leave empty to allow all)
+ALLOWED_IDENTITIES=
 ```
 
 ## Deployment
@@ -76,4 +79,3 @@ chmod +x deploy.sh
 ## To be done
 
 1. Add self-hosted coturn TURN server deployment once support is merged in the API: [https://github.com/jetkvm/cloud-api/pull/53](https://github.com/jetkvm/cloud-api/pull/53)
-2. Add description on email allowlist once it's merged in main: [https://github.com/jetkvm/cloud-api/commit/8596c72b29403f99418ddb893a332f1d7ce94432](https://github.com/jetkvm/cloud-api/commit/8596c72b29403f99418ddb893a332f1d7ce94432)

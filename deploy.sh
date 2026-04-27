@@ -5,7 +5,7 @@ set -e
 
 rm -rf ./kvm ./cloud-api
 
-git clone -b release/0.5.3 https://github.com/jetkvm/kvm.git
+git clone -b release/0.5.6 https://github.com/jetkvm/kvm.git
 cp Dockerfile-ui ./kvm/Dockerfile-ui
 
 rm -f kvm/ui/.env-cloud-production
